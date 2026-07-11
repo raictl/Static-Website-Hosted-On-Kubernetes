@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: website-config
+
+data:
+  APP_NAME: "Static Website"
+  ENVIRONMENT: "dev"
+  OWNER: "Ashutosh Rai"
+

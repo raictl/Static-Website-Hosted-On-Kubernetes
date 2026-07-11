@@ -23,3 +23,19 @@ spec:
           image: ashur2k50/static-website:v1
           ports:
           - containerPort: 80
+           
+          env:
+          - name: APP_NAME
+            valueFrom:
+               configMapKeyRef:
+                name: website-config
+                key: APP_NAME
+          - name: ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: website-config
+                key: ENVIRONMENT 
+
+
+
+                  
