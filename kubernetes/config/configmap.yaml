@@ -3,7 +3,7 @@ kind: ConfigMap
 
 metadata:
   name: website-config
-
+  namespace: static-website
 data:
   APP_NAME: "Static Website"
   ENVIRONMENT: "dev"

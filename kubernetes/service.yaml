@@ -3,7 +3,7 @@ kind: Service
 
 metadata:
   name: static-website-service
-
+  namespace: static-website
 spec:
   selector:
     app: static-website

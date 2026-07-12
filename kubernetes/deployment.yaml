@@ -3,8 +3,12 @@ kind: Deployment
 
 metadata:
   name: static-website
+  namespace: static-website
+
   labels:
     app: static-website
+    env: dev
+    owner: Ashutosh
 
 spec:
   replicas: 2
@@ -17,13 +21,39 @@ spec:
     metadata:
       labels:
         app: static-website
+        env: dev
+        owner: Ashutosh
+
     spec:
       containers:
         - name: website
-          image: ashur2k50/static-website:v1
+          image: ashur2k50/static-website:latest
           ports:
           - containerPort: 80
-           
+
+          resources:
+            requests:
+              memory: "64Mi"   # How much the container is guaranteed to get on startup
+              cpu: "100m"      # 250 millicores (0.25 of a CPU core)
+            limits:
+              memory: "128Mi"  # The absolute max memory the container can use before getting OOMKilled
+              cpu: "250m"      # The absolute max CPU the container can throttle up to
+          
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10       
+            
+          livenessProbe:
+            
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20
+
           env:
           - name: APP_NAME
             valueFrom:
