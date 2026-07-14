@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata: 
+  name: static-website-ingress
+  namespace: static-website
+spec:
+  ingressClassName: nginx
+
+  rules:
+  - host: static-website.local
+
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+
+        backend:
+          service:
+            name: static-website-service
+            port:
+              number: 80
