@@ -32,7 +32,10 @@ jobs:
             -t ashur2k50/static-website:latest .
 
       - name: Scan image for vulnerabilities (Trivy)
-        uses: aquasecurity/trivy-action@0.24.0
+        # Pinned to the commit SHA for v0.36.0, not a mutable tag —
+        # trivy-action has previously been hit by a supply-chain compromise,
+        # so pinning by SHA means a future tag takeover can't silently swap this out.
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ashur2k50/static-website:${{ steps.vars.outputs.sha_tag }}
           format: table
