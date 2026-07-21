@@ -16,7 +16,7 @@ spec:
   selector:
     matchLabels:
       app: static-website
-  
+
   template:
     metadata:
       labels:
@@ -25,11 +25,23 @@ spec:
         owner: Ashutosh
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: website
           image: ashur2k50/static-website:latest
           ports:
-          - containerPort: 80
+          - containerPort: 8080
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false   # nginx-unprivileged writes to /var/cache/nginx at runtime
+            capabilities:
+              drop:
+                - ALL
 
           resources:
             requests:
@@ -38,19 +50,18 @@ spec:
             limits:
               memory: "128Mi"  # The absolute max memory the container can use before getting OOMKilled
               cpu: "250m"      # The absolute max CPU the container can throttle up to
-          
+
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
-            periodSeconds: 10       
-            
+            periodSeconds: 10
+
           livenessProbe:
-            
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 20
 
@@ -64,8 +75,4 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: website-config
-                key: ENVIRONMENT 
-
-
-
-                  
+                key: ENVIRONMENT
