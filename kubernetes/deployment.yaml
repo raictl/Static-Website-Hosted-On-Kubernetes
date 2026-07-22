@@ -38,29 +38,29 @@ spec:
 
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false   # nginx-unprivileged writes to /var/cache/nginx at runtime
+            readOnlyRootFilesystem: false   
             capabilities:
               drop:
                 - ALL
 
           resources:
             requests:
-              memory: "64Mi"   # How much the container is guaranteed to get on startup
+              memory: "96Mi"   # baseline for gunicorn + Flask at idle
               cpu: "100m"      # 250 millicores (0.25 of a CPU core)
             limits:
-              memory: "128Mi"  # The absolute max memory the container can use before getting OOMKilled
-              cpu: "250m"      # The absolute max CPU the container can throttle up to
+              memory: "256Mi"  # headroom for the memory-stress demo (up to 150MB) without an immediate OOMKill
+              cpu: "300m"      # kept low on purpose: a single CPU-stress worker crosses the 70% HPA target quickly, so scaling is visible fast
 
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/status
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
 
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/status
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 20
@@ -76,3 +76,7 @@ spec:
               configMapKeyRef:
                 name: website-config
                 key: ENVIRONMENT
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
